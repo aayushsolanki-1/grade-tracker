@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grade Tracker — Aayush Solanki</title>
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --green: #462C7D;
+            --lightgreen: #D552A3;
+            --yellow: #FF70BF;
+            --orange: #831C91;
+            --bg: #FF70BF;
+            --surface: #FFB6C1;
+            --text: #ffffff;;
+            --muted: #6a3a7a;
+            --border: #D552A3;
+            --mono: 'Share Tech Mono', monospace;
+            --sans: 'Syne', sans-serif;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: var(--mono);
+            min-height: 100vh;
+        }
+
+        header {
+            background: var(--lightgreen);
+            border-bottom: 2px solid var(--border);
+            padding: 1.2rem 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        header h1 {
+            font-family: var(--sans);
+            font-weight: 800;
+            font-size: 1.4rem;
+            color: var(--text);
+        }
+        header h1 span { color: var(--green); }
+
+        .tag {
+            font-size: 0.65rem;
+            color: var(--muted);
+            border: 1px solid var(--border);
+            padding: 2px 10px;
+            border-radius: 20px;
+            background: var(--yellow);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        /* Average card */
+        .avg-card {
+            background: var(--orange);
+            border: 1.5px solid var(--border);
+            border-radius: 14px;
+            padding: 1.2rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .avg-label { font-size: 0.7rem; color: var(--text); text-transform: uppercase; letter-spacing: 0.1em; }
+        .avg-value { font-family: var(--sans); font-weight: 800; font-size: 2.5rem; color: var(--text); }
+
+        /* Form */
+        .form-card {
+            background: var(--surface);
+            border: 1.5px solid var(--border);
+            border-radius: 14px;
+            padding: 1.5rem;
+        }
+
+        .form-title {
+            font-family: var(--sans);
+            font-weight: 700;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            color: var(--green);
+        }
+
+        .form-row {
+            display: flex;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+        }
+
+        .form-row input {
+            font-family: var(--mono);
+            font-size: 0.82rem;
+            padding: 0.6rem 1rem;
+            border: 1.5px solid var(--border);
+            border-radius: 8px;
+            background: var(--bg);
+            color: var(--text);
+            outline: none;
+            flex: 1;
+            min-width: 140px;
+        }
+
+        .form-row input:focus { border-color: var(--green); }
+        .form-row input::placeholder { color: var(--muted); }
+
+        .btn {
+            font-family: var(--mono);
+            font-size: 0.82rem;
+            padding: 0.6rem 1.4rem;
+            border: 1.5px solid var(--green);
+            border-radius: 8px;
+            background: var(--lightgreen);
+            color: var(--green);
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        .btn:hover { background: var(--green); color: #fff; }
+
+        /* Table */
+        .table-card {
+            background: var(--surface);
+            border: 1.5px solid var(--border);
+            border-radius: 14px;
+            overflow: hidden;
+        }
+
+        table { width: 100%; border-collapse: collapse; }
+
+        thead { background: var(--lightgreen); }
+        thead th {
+            padding: 0.8rem 1rem;
+            text-align: left;
+            font-size: 0.68rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--green);
+        }
+
+        tbody tr { border-bottom: 1px solid var(--bg); }
+        tbody tr:last-child { border-bottom: none; }
+        tbody tr:hover { background: var(--bg); }
+
+        tbody td {
+            padding: 0.8rem 1rem;
+            font-size: 0.82rem;
+        }
+
+        .grade-pill {
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.78rem;
+        }
+
+        .grade-a { background: var(--lightgreen); color: var(--green); }
+        .grade-b { background: var(--yellow); color: #7a6000; }
+        .grade-c { background: var(--orange); color: #7a3000; }
+
+        .del-btn {
+            background: none;
+            border: 1px solid #ffaaaa;
+            color: #cc3333;
+            font-family: var(--mono);
+            font-size: 0.72rem;
+            padding: 3px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        .del-btn:hover { background: #cc3333; color: #fff; }
+
+        .empty-row td {
+            text-align: center;
+            color: var(--muted);
+            padding: 2rem;
+            font-size: 0.8rem;
+        }
+
+        .error { color: #cc3333; font-size: 0.75rem; margin-top: 0.5rem; }
+
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            font-size: 0.62rem;
+            color: var(--muted);
+        }
+        footer span { color: var(--orange); font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>GRADE<span>.</span>TRACKER</h1>
+    <span class="tag">Spring Boot</span>
+    <span class="tag">REST API</span>
+    <span class="tag">H2 Database</span>
+</header>
+
+<div class="container">
+
+    <!-- Average -->
+    <div class="avg-card">
+        <div>
+            <div class="avg-label">Class Average</div>
+            <div class="avg-value" id="avgValue">—</div>
+        </div>
+        <div style="font-size:2.5rem;">📊</div>
+    </div>
+
+    <!-- Add student form -->
+    <div class="form-card">
+        <div class="form-title">Add Student</div>
+        <div class="form-row">
+            <input type="text" id="nameInput" placeholder="Student name" />
+            <input type="text" id="subjectInput" placeholder="Subject" />
+            <input type="number" id="gradeInput" placeholder="Grade (0-100)" min="0" max="100" />
+            <button class="btn" onclick="addStudent()">+ Add</button>
+        </div>
+        <div class="error" id="formError"></div>
+    </div>
+
+    <!-- Students table -->
+    <div class="table-card">
+        <table>
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>Name</th>
+                <th>Subject</th>
+                <th>Grade</th>
+                <th>Action</th>
+            </tr>
+            </thead>
+            <tbody id="studentTable">
+            <tr class="empty-row"><td colspan="5">No students yet. Add one above.</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+<footer>github.com/<span>aayushsolanki-1</span> · Powered by Spring Boot + H2</footer>
+
+<script>
+    const API = 'http://localhost:8080/api/students';
+
+    function getGradeClass(g) {
+        if (g >= 75) return 'grade-a';
+        if (g >= 50) return 'grade-b';
+        return 'grade-c';
+    }
+
+    async function loadStudents() {
+        try {
+            const res = await fetch(API);
+            const students = await res.json();
+            const tbody = document.getElementById('studentTable');
+
+            if (students.length === 0) {
+                tbody.innerHTML = '<tr class="empty-row"><td colspan="5">No students yet. Add one above.</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = students.map(s => `
+      <tr>
+        <td>${s.id}</td>
+        <td>${s.name}</td>
+        <td>${s.subject}</td>
+        <td><span class="grade-pill ${getGradeClass(s.grade)}">${s.grade}</span></td>
+        <td><button class="del-btn" onclick="deleteStudent(${s.id})">Delete</button></td>
+      </tr>
+    `).join('');
+
+            loadAverage();
+        } catch(e) {
+            console.error(e);
+        }
+    }
+
+    async function loadAverage() {
+        try {
+            const res = await fetch(API + '/average');
+            const data = await res.json();
+            document.getElementById('avgValue').textContent =
+                data.average > 0 ? data.average.toFixed(1) + '%' : '—';
+        } catch(e) {}
+    }
+
+    async function addStudent() {
+        const name    = document.getElementById('nameInput').value.trim();
+        const subject = document.getElementById('subjectInput').value.trim();
+        const grade   = parseFloat(document.getElementById('gradeInput').value);
+        const errEl   = document.getElementById('formError');
+
+        if (!name || !subject || isNaN(grade)) {
+            errEl.textContent = 'All fields are required.'; return;
+        }
+        if (grade < 0 || grade > 100) {
+            errEl.textContent = 'Grade must be between 0 and 100.'; return;
+        }
+        errEl.textContent = '';
+
+        await fetch(API, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name, subject, grade })
+        });
+
+        document.getElementById('nameInput').value = '';
+        document.getElementById('subjectInput').value = '';
+        document.getElementById('gradeInput').value = '';
+        loadStudents();
+    }
+
+    async function deleteStudent(id) {
+        await fetch(API + '/' + id, { method: 'DELETE' });
+        loadStudents();
+    }
+
+    window.addEventListener('load', loadStudents);
+</script>
+</body>
+</html>
