@@ -22,3 +22,6 @@ Java · Spring Boot 3.5 · Spring Data JPA · H2 Database · REST API · HTML ·
 
 ## Run Locally
 ```bash
+./mvnw spring-boot:run
+```
+Then open http://localhost:8080
